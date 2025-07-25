@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './HomePage.module.scss';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { onSelectExportType, dataTypeLoaded, addRows, onSelectDataType, clearPage } from '~store/generator/generator.actions';
+import { onSelectExportType, addRows, onSelectDataType } from '~store/generator/generator.actions';
 import { ExportTypeFolder, DataTypeFolder } from '../../../_plugins';
 import { getSortedGroupedDataTypes } from '~utils/dataTypeUtils';
-import { GDAction } from '~types/general';
 
 type DataTypeOption = {
 	value: DataTypeFolder;
