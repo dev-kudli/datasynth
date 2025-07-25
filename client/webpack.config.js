@@ -104,7 +104,7 @@ module.exports = (env, argv) => {
 			host: '0.0.0.0',
 			port: process.env.GD_WEB_SERVER_PORT,
 			open: true,
-			allowedHosts: 'all',
+			allowedHosts: ['all'],
 		};
 
 		// just uncomment this & the include above to auto-generate the bundle analyzer treemap. It'll show up when
