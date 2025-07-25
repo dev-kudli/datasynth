@@ -52,7 +52,7 @@ export const getRoutes = (): GDRoute[] => {
 		}
 	});
 
-	rootRoutes.push({ path: '/', component: HomePage })
+	rootRoutes.push({ path: '/', component: HomePage });
 
 	if (rootRoutes.length) {
 		routes = routes.concat(rootRoutes);
