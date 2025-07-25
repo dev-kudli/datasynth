@@ -3,6 +3,7 @@ import AccountPage from '~core/account/Account.container';
 import DataSetsPage from '~core/account/dataSets/DataSets.container';
 import LoginPage from '~core/auth/loginPage/LoginPage.container';
 import AccountsPage from '~core/accounts/Accounts.container';
+import HomePage from '~core/home/HomePage';
 import { GDHeaderLink, GDLocale, GDRoute } from '~types/general';
 import { AccountType } from '~types/account';
 import { PAGE_CHANGE } from '~store/main/main.actions';
@@ -19,11 +20,12 @@ export const registerCustomRoutes = (routes: GDRoute[]): void => {
 // allows external customization via the `registerCustomRoutes` method above
 export const getRoutes = (): GDRoute[] => {
 	let routes: GDRoute[] = [
+		{ path: '/', component: HomePage },
 		{ path: '/account', component: AccountPage },
 		{ path: '/accounts', component: AccountsPage },
 		{ path: '/login', component: LoginPage },
 		{ path: '/datasets', component: DataSetsPage },
-		{ path: '/register', component: DataSetsPage }
+		{ path: '/register', component: DataSetsPage },
 	];
 
 	// react-router is a bit fussy about the order of routes; the root one has to come last. Since that is configurable
