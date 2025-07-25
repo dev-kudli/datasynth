@@ -20,7 +20,6 @@ export const registerCustomRoutes = (routes: GDRoute[]): void => {
 // allows external customization via the `registerCustomRoutes` method above
 export const getRoutes = (): GDRoute[] => {
 	let routes: GDRoute[] = [
-		{ path: '/', component: HomePage },
 		{ path: '/account', component: AccountPage },
 		{ path: '/accounts', component: AccountsPage },
 		{ path: '/login', component: LoginPage },
@@ -52,6 +51,8 @@ export const getRoutes = (): GDRoute[] => {
 			routes.push({ path, component });
 		}
 	});
+
+	rootRoutes.push({ path: '/', component: HomePage })
 
 	if (rootRoutes.length) {
 		routes = routes.concat(rootRoutes);
