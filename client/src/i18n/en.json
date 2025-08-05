@@ -325,5 +325,8 @@
 	"yes": "Yes",
 	"yourAccount": "Your Account",
 	"yourAccountUpdated": "Your account has been updated.",
-	"yourUserAccount": "Your User Account"
+	"yourUserAccount": "Your User Account",
+	"selectCohort": "Select the cohort you want the templates for",
+	"happydr": "HappyDr",
+	"accountingpt": "Accounting"
 }

@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import styles from './HomePage.module.scss';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { onSelectExportType, addRows, onSelectDataType } from '~store/generator/generator.actions';
+import {
+	clearPage,
+	addRows,
+	onSelectDataType,
+	onSelectExportType,
+	refreshPreview
+} from '~store/generator/generator.actions';
 import { ExportTypeFolder, DataTypeFolder } from '../../../_plugins';
 import { getSortedGroupedDataTypes } from '~utils/dataTypeUtils';
+import store from '../store';
 
 type DataTypeOption = {
 	value: DataTypeFolder;
@@ -15,41 +22,37 @@ type DataTypeOption = {
 const exportFormats = ['JSON', 'CSV', 'SQL', 'XML', 'HTML', 'Javascript', 'Typescript', 'PHP', 'Pearl', 'C#', 'Ruby', 'Python'];
 
 const HomePage: React.FC = () => {
-	const rows = useSelector((state: any) => state.generator?.rows || []);
-	console.log('Current rows:', rows);
-
 	const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
+	const [selectedDataTypes, setSelectedDataTypes] = useState<DataTypeFolder[]>([]);
 	const history = useHistory();
 	const dispatch = useDispatch();
 
-	const [selectedTiles, setSelectedTiles] = useState<string[]>([]);
-	const dataTypeOptions: Array<{ value: DataTypeFolder; label: string }> = getSortedGroupedDataTypes()
+	const dataTypeOptions: Array<DataTypeOption> = getSortedGroupedDataTypes()
 		.flatMap((group: any) => group.options)
 		.slice(0, 12);
 
-	const handleSelectOutputFormat = (format: string) => {
-		console.log('format', format);
-		setSelectedFormat(format);
-		dispatch(onSelectExportType(format as ExportTypeFolder));
+	const handleGenerate = async () => {
+		const numRows = selectedDataTypes.length;
+
+		await dispatch(clearPage(false));
+		await dispatch(addRows(numRows));
+
+		const rows = Object.values(store.getState().generator.rows).slice(-numRows);
+		rows.forEach((row: any, i: number) => {
+			dispatch(onSelectDataType(selectedDataTypes[i], row.id));
+		});
+
+		dispatch(onSelectExportType(selectedFormat as ExportTypeFolder));
+		dispatch(refreshPreview());
+
+		history.push('/generator');
 	};
 
-	const [selectedDataTypes, setSelectedDataTypes] = useState<DataTypeFolder[]>([]);
-
-	const toggleDataType = (type: DataTypeFolder) => {
-		setSelectedDataTypes(prev =>
-			prev.includes(type)
-				? prev.filter(t => t !== type)
-				: [...prev, type]
-		);
-	};
 	return (
 		<div className={styles.homepage}>
 			<section className={styles.hero}>
 				<h1>Generate test data. Quickly.</h1>
-				<h2>
-					Then spend time on more important things. Like
-					<span className={styles.fade}> ...really anything.</span>
-				</h2>
+				<h2>Then spend time on more important things. Like<span className={styles.fade}> ...really anything.</span></h2>
 				<div className={styles.heroActions}>
 					<button>Take a tour</button>
 				</div>
@@ -75,15 +78,19 @@ const HomePage: React.FC = () => {
 
 				<div className={styles.stepWrapper}>
 					<div>
-						<h4>
-							<span className={styles.stepNumber}>1</span> Choose the types of data you want
-						</h4>
+						<h4><span className={styles.stepNumber}>1</span> Choose the types of data you want</h4>
 						<div className={styles.dataTypes}>
 							{dataTypeOptions.map(({ value, label }) => (
 								<div
 									key={value}
 									className={`${styles.tile} ${selectedDataTypes.includes(value) ? styles.selected : ''}`}
-									onClick={() => toggleDataType(value)}
+									onClick={() =>
+										setSelectedDataTypes(prev =>
+											prev.includes(value)
+												? prev.filter(t => t !== value)
+												: [...prev, value]
+										)
+									}
 								>
 									{label}
 								</div>
@@ -92,15 +99,13 @@ const HomePage: React.FC = () => {
 					</div>
 
 					<div>
-						<h4>
-							<span className={styles.stepNumber}>2</span> Choose a data format
-						</h4>
+						<h4><span className={styles.stepNumber}>2</span> Choose a data format</h4>
 						<div className={styles.exportFormats}>
-							{exportFormats.map((format): JSX.Element => (
+							{exportFormats.map(format => (
 								<div
 									key={format}
 									className={`${styles.tile} ${selectedFormat === format ? styles.selected : ''}`}
-									onClick={(): void => handleSelectOutputFormat(format)}
+									onClick={() => setSelectedFormat(format)}
 								>
 									{format}
 								</div>
@@ -108,6 +113,7 @@ const HomePage: React.FC = () => {
 						</div>
 					</div>
 				</div>
+
 				<div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
 					<button
 						style={{
@@ -120,14 +126,7 @@ const HomePage: React.FC = () => {
 							cursor: 'pointer',
 							transition: 'background-color 0.3s ease',
 						}}
-						onClick={() => {
-							// dispatch(clearPage(false));
-							dispatch(addRows(selectedDataTypes.length));
-							Object.values(rows).slice(0, selectedDataTypes.length).forEach((row: any, index) => {
-								dispatch(onSelectDataType(selectedDataTypes[index], row.id));
-							});
-							history.push('/generator');
-						}}
+						onClick={handleGenerate}
 					>
 						Generate
 					</button>

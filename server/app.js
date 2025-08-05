@@ -11,11 +11,18 @@ const app = express();
 
 const protocol = process.env.GD_WEB_USE_HTTPS === 'true' ? 'https' : 'http';
 
+app.use((req, res, next) => {
+	console.log('Origin:', req.headers.origin);
+	console.log(`${protocol}://${process.env.GD_WEB_DOMAIN}:${process.env.GD_WEB_SERVER_PORT}`);
+	next();
+});
+
 // see: https://github.com/expressjs/cors#configuration-options
 const corsOptions = {
 	origin: `${protocol}://${process.env.GD_WEB_DOMAIN}:${process.env.GD_WEB_SERVER_PORT}`,
 	credentials: true
 };
+
 
 app.use(cookieParser());
 
