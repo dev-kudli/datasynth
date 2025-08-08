@@ -1,5 +1,6 @@
 declare namespace HomePageModuleScssNamespace {
   export interface IHomePageModuleScss {
+    categorySelector: string;
     dataTypes: string;
     exportFormats: string;
     fade: string;
@@ -9,6 +10,7 @@ declare namespace HomePageModuleScssNamespace {
     heroActions: string;
     homepage: string;
     logo: string;
+    pill: string;
     quickStart: string;
     selected: string;
     stepNumber: string;

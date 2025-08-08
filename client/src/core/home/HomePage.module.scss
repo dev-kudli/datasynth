@@ -94,6 +94,29 @@
       }
     }
   }
+  .categorySelector {
+    display: flex;
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  
+  .pill {
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .pill:hover {
+    background-color: #f2f2f2;
+  }
+  
+  .pill.selected {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }  
 
   .quickStart {
     background-color: #fff;

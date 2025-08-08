@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 
 // see: https://github.com/expressjs/cors#configuration-options
 const corsOptions = {
-	origin: `${protocol}://${process.env.GD_WEB_DOMAIN}:${process.env.GD_WEB_SERVER_PORT}`,
+	origin: `${protocol}://${process.env.GD_WEB_DOMAIN}`,
 	credentials: true
 };
 
