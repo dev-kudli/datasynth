@@ -25,10 +25,12 @@ type DataTypeOption = {
 const exportFormats = ['JSON', 'CSV', 'SQL', 'XML', 'HTML', 'Javascript', 'Typescript', 'PHP', 'Pearl', 'C#', 'Ruby', 'Python'];
 
 const HomePage: React.FC = () => {
+	const availableCohorts = ['Tax-Accounting', 'Healthcare'];
+
 	const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
 	const [selectedDataTypes, setSelectedDataTypes] = useState<DataTypeFolder[]>([]);
 	const [selectedTemplate, setSelectedTemplate] = useState<string>('');
-	const [selectedCohort, setSelectedCohort] = useState<'happydr' | 'accounting'>('happydr');
+	const [selectedCohort, setSelectedCohort] = useState<string>(availableCohorts[0]);
 	const history = useHistory();
 	const dispatch = useDispatch();
 
@@ -37,7 +39,7 @@ const HomePage: React.FC = () => {
 		.slice(0, 12);
 
 	const filteredTemplates = Object.entries(allTemplates)
-		.filter(([key]) => key.startsWith(selectedCohort))
+		.filter(([key]) => key.startsWith(selectedCohort.toLowerCase()))
 		.map(([key, mets]) => ({
 			label: mets.label,
 			value: key
@@ -116,13 +118,13 @@ const HomePage: React.FC = () => {
 				<div>
 					<h4><span className={styles.stepNumber}>1</span> Choose a template type</h4>
 					<div className={styles.categorySelector}>
-						{['happydr', 'accounting'].map(category => (
+						{availableCohorts.map(category => (
 							<div
 								key={category}
 								className={`${styles.pill} ${selectedCohort === category ? styles.selected : ''}`}
 								onClick={() => {
-									setSelectedCohort(category as 'happydr' | 'accounting');
-									setSelectedTemplate(''); // reset template on cohort change
+									setSelectedCohort(category);
+									setSelectedTemplate('');
 								}}
 							>
 								{category.toUpperCase()}
