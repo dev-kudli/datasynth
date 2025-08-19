@@ -103,7 +103,10 @@ const HomePage: React.FC = () => {
 			accountId: 0,
 			content: JSON.stringify({
 				exportType: selectedFormat as ExportTypeFolder,
-				exportTypeSettings: {},
+				exportTypeSettings: {
+					dataStructureFormat: 'simple',
+					isValid: true
+				},
 				rows,
 				sortedRows
 			}),
