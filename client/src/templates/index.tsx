@@ -1,31 +1,29 @@
 import { happydrTemplates } from './happydr';
 import { accountingTemplates } from './accounting';
-import { ExportTypeFolder, DataTypeFolder } from '../../_plugins';
+import { DataTypeFolder } from '../../_plugins';
+import { DataTypeConfig } from './happydr';
 
 const templateLabels: Record<string, string> = {
 	'w2TaxForm': 'W-2 Tax Form',
-	'taxReturn': 'Tax Return',
-	'invoice': 'Invoice',
-	'expenseReport': 'expenseReport',
-	'auditLog': 'auditLog',
-	'balanceSheet': 'balanceSheet',
-	'patient': 'Patient',
-	'provider': 'Provider',
-	'claim': 'Claim',
-	'insurance': 'Insurance'
 };
+
+function camelCaseToLabel(key: string): string {
+	return key
+		.replace(/([a-z0-9])([A-Z])/g, '$1 $2') // insert space before capital letters
+		.replace(/^./, str => str.toUpperCase()); // capitalize the first letter
+}
 
 type TemplateMeta = {
 	label: string;
 	category: string;
-	data: Record<string, DataTypeFolder>;
+	data: Record<string, DataTypeConfig>;
 };
 
 export const allTemplates: Record<string, TemplateMeta> = {
 	// Flatten happydr
 	...Object.entries(happydrTemplates).reduce((acc, [key, val]) => {
 		acc[`healthcare.${key}`] = {
-			label: templateLabels[key] || key,
+			label: templateLabels[key] || camelCaseToLabel(key),
 			category: 'Healthcare',
 			data: val
 		};
@@ -33,14 +31,14 @@ export const allTemplates: Record<string, TemplateMeta> = {
 	}, {} as Record<string, TemplateMeta>),
 
 	// Flatten accounting
-	...Object.entries(accountingTemplates).reduce((acc, [key, val]) => {
-		acc[`tax-accounting.${key}`] = {
-			label: templateLabels[key] || key,
-			category: 'Tax-Accounting',
-			data: val
-		};
-		return acc;
-	}, {} as Record<string, TemplateMeta>)
+	// ...Object.entries(accountingTemplates).reduce((acc, [key, val]) => {
+	// 	acc[`tax-accounting.${key}`] = {
+	// 		label: templateLabels[key] || key,
+	// 		category: 'Tax-Accounting',
+	// 		data: val
+	// 	};
+	// 	return acc;
+	// }, {} as Record<string, TemplateMeta>)
 };
 
 export type TemplateKey = keyof typeof allTemplates;

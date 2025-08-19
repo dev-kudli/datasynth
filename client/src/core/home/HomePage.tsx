@@ -9,13 +9,19 @@ import {
 	onSelectDataType,
 	onSelectExportType,
 	refreshPreview,
-	onChangeTitle
+	onChangeTitle,
+	onConfigureDataType,
+	loadDataSet,
 } from '~store/generator/generator.actions';
+import { DataRow } from '~store/generator/generator.reducer';
+import { DataSetListItem } from '~types/dataSets';
 import { ExportTypeFolder, DataTypeFolder } from '../../../_plugins';
 import { getSortedGroupedDataTypes } from '~utils/dataTypeUtils';
 import store from '../store';
 import { batch } from 'react-redux';
 import { allTemplates, TemplateOption, TemplateKey } from '../../templates';
+
+import { nanoid } from 'nanoid';
 
 type DataTypeOption = {
 	value: DataTypeFolder;
@@ -30,7 +36,7 @@ const HomePage: React.FC = () => {
 	const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
 	const [selectedDataTypes, setSelectedDataTypes] = useState<DataTypeFolder[]>([]);
 	const [selectedTemplate, setSelectedTemplate] = useState<string>('');
-	const [selectedCohort, setSelectedCohort] = useState<string>(availableCohorts[0]);
+	const [selectedCohort, setSelectedCohort] = useState<string>(availableCohorts[1]);
 	const history = useHistory();
 	const dispatch = useDispatch();
 
@@ -68,25 +74,50 @@ const HomePage: React.FC = () => {
 		const template = allTemplates[selectedTemplate];
 		const fieldMap = template.data;
 		const fieldNames = Object.keys(fieldMap);
-		const fieldTypes = Object.values(fieldMap);
-		setSelectedDataTypes(fieldTypes);
+		const fieldConfigs = Object.values(fieldMap);
 	
-		await dispatch(clearPage(false));
-		await dispatch(addRows(fieldTypes.length));
+		// Step 1. Construct rows and sortedRows
+		const rows: Record<string, DataRow> = {};
+		const sortedRows: string[] = [];
 	
-		const rows = Object.values(store.getState().generator.rows).slice(-fieldTypes.length);
-		batch(() => {
-			rows.forEach((row: any, i: number) => {
-				dispatch(onSelectDataType(fieldTypes[i], row.id));
-				dispatch(onChangeTitle(row.id, fieldNames[i]));
-			});
-			dispatch(onSelectExportType(selectedFormat as ExportTypeFolder));
-			// dispatch(refreshPreview());
-			history.push('/generator');
+		fieldNames.forEach((field, i) => {
+			const config = fieldConfigs[i];
+			const rowId = nanoid();
+			rows[rowId] = {
+				id: rowId,
+				title: field, // Or customize label as desired
+				titleError: null,
+				dataType: config.type,
+				data: config.options ? { ...config.options } : null,
+				metadata: undefined
+			};
+			sortedRows.push(rowId);
 		});
-		
+	
+		// Step 2. Build the mock DataSetListItem object with your settings and template data
+		const dataSet: DataSetListItem = {
+			historyId: 0,
+			dataSetId: 0,
+			dataSetName: template.label || selectedTemplate,
+			status: 'private',
+			accountId: 0,
+			content: JSON.stringify({
+				exportType: selectedFormat as ExportTypeFolder,
+				exportTypeSettings: {},
+				rows,
+				sortedRows
+			}),
+			numRowsGenerated: Object.keys(rows).length,
+			dateCreatedUnix: `${Date.now()}`,
+			historyDateCreatedUnix: `${Date.now()}`,
+		};
+	
+		// Step 3. Use your bulk action to load all grid state at once
+		await dispatch(loadDataSet(dataSet, false));
+	
+		history.push('/generator');
 	};
-
+	
 	return (
 		<div className={styles.homepage}>
 			<section className={styles.hero}>
