@@ -409,12 +409,185 @@ export const procedure: Record<string, DataTypeConfig> = {
 	}
 };
 
-export const claim: Record<string, DataTypeFolder> = {
-	claimID: 'GUID',
-	patientName: 'Names',
-	providerName: 'Company',
-	claimDate: 'Date',
-	totalAmount: 'Currency'
+export const claim: Record<string, DataTypeConfig> = {
+	id: {
+		type: 'GUID'
+	},
+	identifier: {
+		type: 'GUID'
+	},
+	status: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['completed']
+		}
+	},
+	use: {
+		type: 'Constant',
+		options: {
+			loopCount: 3,
+			values: ['claim', 'preauthorization', 'predetermination']
+		}
+	},
+	type: {
+		type: 'Constant',
+		options: {
+			loopCount: 5,
+			values: ['oral', 'pharmacy', 'vision', 'institutional', 'professional']
+		}
+	},
+	subtype: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['outpatient']
+		}
+	},
+	priority: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['noarmal']
+		}
+	},
+	fundsReserve: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['priority']
+		}
+	},
+	patientReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Patient']
+		}
+	},
+	entererReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Practitioner']
+		}
+	},
+	providerReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Practitioner']
+		}
+	},
+	insurerReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Organization']
+		}
+	},
+	billableStartPeriod: {
+		type: 'Date',
+		options: {
+			fromDate: parseInt(format(subYears(new Date(), 1), 't'), 10),
+			toDate: parseInt(format(addYears(new Date(), 1), 't'), 10),
+			example: 'MMM d, y',
+			format: 'MMM d, y'
+		}
+	},
+	billableEndPeriod: {
+		type: 'Date',
+		options: {
+			fromDate: parseInt(format(subYears(new Date(), 1), 't'), 10),
+			toDate: parseInt(format(addYears(new Date(), 1), 't'), 10),
+			example: 'MMM d, y',
+			format: 'MMM d, y'
+		}
+	},
+	payeeCode: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['subscriber']
+		}
+	},
+	payeePartyReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Patient']
+		}
+	},
+	facilityReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Organization']
+		}
+	},
+	careTeamProviderReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Provider']
+		}
+	},
+	diagnosisReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Diagnosis']
+		}
+	},
+	procedureReference: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Procedure']
+		}
+	},
+	insuranceCoverage: {
+		type: 'Constant',
+		options: {
+			loopCount: 1,
+			values: ['Coverage']
+		}
+	},
+	accidentAddress: { 
+		type: 'StreetAddress' 
+	},
+	accidentCity: {
+		type: 'City',
+		options: {
+			source: 'any',
+			selectedCountries: [],
+			targetRowId: ''
+		}
+	},
+	accidentState: { 
+		type: 'Region',
+		options: {
+			source: 'anyRegion',
+			selectedCountries: [],
+			targetRowId: '',
+			formats: ['full']
+		}
+	},
+	accidentPostalCode: { 
+		type: 'PostalZip',
+		options: {
+			source: 'any',
+			selectedCountries: [],
+			targetRowId: ''
+		}
+	},
+	accidentCountry: { 
+		type: 'Country',
+		options: {
+			source: 'plugins',
+			selectedCountries: []
+		}
+	},
 };
 
 export const happydrTemplates = {

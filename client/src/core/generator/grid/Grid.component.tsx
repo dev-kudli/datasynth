@@ -47,8 +47,8 @@ export type AboutProps = {
 };
 
 export const enum Cohort {
-	happydr = 'happydr',
-	accounting = 'accounting',
+	happydr = 'healthcare',
+	accounting = 'tax-accounting',
 }
 
 const patient = {

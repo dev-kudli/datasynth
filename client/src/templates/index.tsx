@@ -31,14 +31,14 @@ export const allTemplates: Record<string, TemplateMeta> = {
 	}, {} as Record<string, TemplateMeta>),
 
 	// Flatten accounting
-	// ...Object.entries(accountingTemplates).reduce((acc, [key, val]) => {
-	// 	acc[`tax-accounting.${key}`] = {
-	// 		label: templateLabels[key] || key,
-	// 		category: 'Tax-Accounting',
-	// 		data: val
-	// 	};
-	// 	return acc;
-	// }, {} as Record<string, TemplateMeta>)
+	...Object.entries(accountingTemplates).reduce((acc, [key, val]) => {
+		acc[`tax-accounting.${key}`] = {
+			label: templateLabels[key] || camelCaseToLabel(key),
+			category: 'Tax-Accounting',
+			data: val
+		};
+		return acc;
+	}, {} as Record<string, TemplateMeta>)
 };
 
 export type TemplateKey = keyof typeof allTemplates;

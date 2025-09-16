@@ -105,16 +105,18 @@ const Header = ({
 			<header className={styles.header}>
 				<div style={{ position: 'relative' }}>
 					<h1>
-						<img
-							src="./images/dice80.png"
-							width={40}
-							height={40}
-							alt={i18n.siteLogo}
-						/>
+						<a href="/">
+							<img
+								src="./images/logo.png"
+								width={40}
+								height={40}
+								alt={i18n.siteLogo}
+							/>
+						</a>
 					</h1>
-					<div className={logoClasses}>
+					{/* <div className={logoClasses}>
 						<img src="./images/logo.png" alt="generatedata.com" />
-					</div>
+					</div> */}
 					<div className={generatorControlsClasses}>
 						<GeneratorControls disabled={generatorControlsDisabled} />
 					</div>

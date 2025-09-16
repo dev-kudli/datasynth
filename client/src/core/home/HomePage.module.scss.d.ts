@@ -15,6 +15,7 @@ declare namespace HomePageModuleScssNamespace {
     selected: string;
     stepNumber: string;
     stepWrapper: string;
+    templateTile: string;
     tile: string;
   }
 }

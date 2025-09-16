@@ -9,8 +9,6 @@ import {
 	onSelectDataType,
 	onSelectExportType,
 	refreshPreview,
-	onChangeTitle,
-	onConfigureDataType,
 	loadDataSet,
 } from '~store/generator/generator.actions';
 import { DataRow } from '~store/generator/generator.reducer';
@@ -18,10 +16,9 @@ import { DataSetListItem } from '~types/dataSets';
 import { ExportTypeFolder, DataTypeFolder } from '../../../_plugins';
 import { getSortedGroupedDataTypes } from '~utils/dataTypeUtils';
 import store from '../store';
-import { batch } from 'react-redux';
-import { allTemplates, TemplateOption, TemplateKey } from '../../templates';
-
+import { allTemplates } from '../../templates';
 import { nanoid } from 'nanoid';
+import { getExportTypeInitialState, loadExportTypeBundle } from '~utils/exportTypeUtils';
 
 type DataTypeOption = {
 	value: DataTypeFolder;
@@ -93,7 +90,10 @@ const HomePage: React.FC = () => {
 			};
 			sortedRows.push(rowId);
 		});
+
+		const bundle = await loadExportTypeBundle(selectedFormat as ExportTypeFolder);
 	
+		
 		// Step 2. Build the mock DataSetListItem object with your settings and template data
 		const dataSet: DataSetListItem = {
 			historyId: 0,
@@ -103,10 +103,7 @@ const HomePage: React.FC = () => {
 			accountId: 0,
 			content: JSON.stringify({
 				exportType: selectedFormat as ExportTypeFolder,
-				exportTypeSettings: {
-					dataStructureFormat: 'simple',
-					isValid: true
-				},
+				exportTypeSettings: bundle.initialState,
 				rows,
 				sortedRows
 			}),
@@ -147,10 +144,10 @@ const HomePage: React.FC = () => {
 			</section>
 
 			<section className={styles.quickStart}>
-				<h2>Choose your domain</h2>
+				<h2>Quick Start</h2>
 
 				<div>
-					<h4><span className={styles.stepNumber}>1</span> Choose a template type</h4>
+					<h4><span className={styles.stepNumber}>1</span> Choose your domain</h4>
 					<div className={styles.categorySelector}>
 						{availableCohorts.map(category => (
 							<div
@@ -176,7 +173,7 @@ const HomePage: React.FC = () => {
 							{filteredTemplates.map(({ value, label }) => (
 								<div
 									key={value}
-									className={`${styles.tile} ${selectedTemplate === value ? styles.selected : ''}`}
+									className={`${styles.templateTile} ${selectedTemplate === value ? styles.selected : ''}`}
 									onClick={() => setSelectedTemplate(value)}
 								>
 									{label}
@@ -222,7 +219,7 @@ const HomePage: React.FC = () => {
 				</div>
 			</section>
 
-			<section className={styles.quickStart}>
+			{/* <section className={styles.quickStart}>
 				<h2>Quick Start <span>— or skip to the generator</span></h2>
 
 				<div className={styles.stepWrapper}>
@@ -280,7 +277,7 @@ const HomePage: React.FC = () => {
 						Generate
 					</button>
 				</div>
-			</section>
+			</section> */}
 		</div>
 	);
 };
