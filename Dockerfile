@@ -11,10 +11,10 @@ RUN cd client && yarn install && yarn build
 FROM nginx:latest
 
 # Copy build output from client
-COPY --from=builder /app/client/build /usr/share/nginx/html
+COPY --from=builder /app/client/dist /usr/share/nginx/html
 
 # Optional: custom Nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./server/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 9000
 CMD ["nginx", "-g", "daemon off;"]
