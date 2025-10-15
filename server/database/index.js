@@ -11,7 +11,7 @@ const sequelize = new Sequelize(
 	process.env.GD_MYSQL_ROOT_USER,
 	process.env.GD_MYSQL_ROOT_PASSWORD,
 	{
-		host: 'db',
+		host: process.env.GD_MYSQL_HOST,
 		port: process.env.GD_DB_PORT,
 		dialect: 'mysql',
 		define: {
@@ -40,4 +40,12 @@ db.dataSetHistory.belongsTo(db.dataSets);
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+(async () => {
+	try {
+	  await sequelize.authenticate();
+	  console.log(`Connected to mariadb at ${process.env.GD_MYSQL_HOST}:${process.env.GD_DB_PORT}.`);
+	} catch (error) {
+	  console.error('Unable to connect to the database:', error.message);
+	}
+  })();
 module.exports = db;

@@ -14,7 +14,6 @@ const protocol = process.env.GD_WEB_USE_HTTPS === 'true' ? 'https' : 'http';
 
 app.use((req, res, next) => {
 	console.log('Origin:', req.headers.origin);
-	console.log('Port', `${process.env.GD_WEB_SERVER_PORT}`);
 	next();
 });
 
@@ -63,10 +62,25 @@ const COLLECTION = "nodejs_test"
 const AUTH = {
 	username: 'admin',
 	password: ''
-  };
+};
 
+app.get('/healthz', (req, res) => {
+	res.status(200).send("Hey Sherpa"); 
+})
 app.use('/upload-w2', express.raw({ type: 'application/xml' }));
+
+// 💥 Manually handle pre-flight CORS (OPTIONS)
+app.options('/upload-w2', (req, res) => {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+	res.setHeader('Access-Control-Allow-Credentials', 'true');
+	res.sendStatus(200);
+});
+
 app.post('/upload-w2', async (req, res) => {
+	res.setHeader('Access-Control-Allow-Origin', '*');
+	res.setHeader('Access-Control-Allow-Credentials', 'true');
 	try {
 		const xml = req.body.toString();
 
@@ -102,4 +116,5 @@ app.post('/upload-w2', async (req, res) => {
 
 app.listen(process.env.GD_API_SERVER_PORT, () => {
 	console.log('Server started on port ' + process.env.GD_API_SERVER_PORT);
+	console.log('MariaDB database host is ' + process.env.GD_MYSQL_HOST);
 });
