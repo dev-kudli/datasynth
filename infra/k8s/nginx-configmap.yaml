@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapp-nginx-conf
+data:
+  default.conf: |
+    server {
+      listen 80;
+      server_name _;   # default catch-all
+
+      root /usr/share/nginx/html;
+      index index.html;
+
+      gzip on;
+      gzip_types text/plain text/javascript application/x-javascript text/css application/javascript application/json image/svg+xml;
+      gzip_comp_level 9;
+
+      etag on;
+
+      # React frontend
+      location / {
+          try_files $uri /index.html;
+      }
+
+      # Optional: prevent caching index.html
+      location = /index.html {
+          add_header Cache-Control "no-cache, no-store, must-revalidate";
+          add_header Pragma "no-cache";
+          add_header Expires 0;
+      }
+
+      # Apollo server proxy
+      location /graphql {
+          proxy_pass http://server:3001/graphql/;
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "upgrade";
+          proxy_set_header Host $host;
+          proxy_cache_bypass $http_upgrade;
+      }
+    }

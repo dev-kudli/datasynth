@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp
+          image: generatedata-webapp:3.1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+          env:
+            - name: GD_MYSQL_HOST
+              value: "mariadb"
+            - name: GD_WEB_DOMAIN
+              value: "generatedata.sherpaanalytics.ai"
+            - name: GD_WEB_USE_HTTPS
+              value: "true"
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: webapp-nginx-conf
+            items:
+              - key: default.conf
+                path: default.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp
+spec:
+  selector:
+    app: webapp
+  ports:
+    - port: 80
+      targetPort: 80
+  type: ClusterIP
